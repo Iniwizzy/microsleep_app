@@ -3,11 +3,9 @@ import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
 import 'package:appcamera/providers/eye_detection_provider.dart';
 import 'package:appcamera/services/eye_detection_service.dart';
-import 'dart:async';
 
 class EyeDetectionCamera extends StatefulWidget {
   final List<CameraDescription> cameras;
-
   const EyeDetectionCamera({super.key, required this.cameras});
 
   @override
@@ -16,14 +14,14 @@ class EyeDetectionCamera extends StatefulWidget {
 
 class _EyeDetectionCameraState extends State<EyeDetectionCamera> {
   late CameraController _controller;
-  Timer? _detectionTimer;
-  bool _isProcessing = false;
+  bool _isDetecting = false;
+  DateTime? _lastDetectionTime;
+  final int _minDetectionDelayMs = 500;
 
   @override
   void initState() {
     super.initState();
     _initializeCamera();
-    _startContinuousDetection();
   }
 
   Future<void> _initializeCamera() async {
@@ -35,33 +33,30 @@ class _EyeDetectionCameraState extends State<EyeDetectionCamera> {
       ResolutionPreset.medium,
       enableAudio: false,
     );
-
     await _controller.initialize();
+
     if (mounted) {
       setState(() {});
       Provider.of<EyeDetectionProvider>(context, listen: false)
           .setDetecting(true);
+      await _controller.startImageStream(_processCameraImage);
     }
   }
 
-  void _startContinuousDetection() {
-    _detectionTimer =
-        Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      if (!_isProcessing && _controller.value.isInitialized) {
-        _captureAndDetect();
-      }
-    });
-  }
+  void _processCameraImage(CameraImage image) async {
+    final now = DateTime.now();
+    if (_isDetecting) return;
+    if (_lastDetectionTime != null &&
+        now.difference(_lastDetectionTime!).inMilliseconds <
+            _minDetectionDelayMs) {
+      return;
+    }
+    _lastDetectionTime = now;
 
-  Future<void> _captureAndDetect() async {
-    if (_isProcessing) return;
-
-    setState(() => _isProcessing = true);
-
+    _isDetecting = true;
     try {
-      final image = await _controller.takePicture();
-      final result = await EyeDetectionService.detectEyeStatus(image.path);
-
+      final result =
+          await EyeDetectionService.detectEyeStatusFromCameraImage(image);
       if (mounted) {
         Provider.of<EyeDetectionProvider>(context, listen: false)
             .updateEyeStatus(result['status'], result['confidence']);
@@ -69,15 +64,15 @@ class _EyeDetectionCameraState extends State<EyeDetectionCamera> {
     } catch (e) {
       print('Detection error: $e');
     } finally {
-      if (mounted) {
-        setState(() => _isProcessing = false);
-      }
+      _isDetecting = false;
     }
   }
 
   @override
   void dispose() {
-    _detectionTimer?.cancel();
+    if (_controller.value.isStreamingImages) {
+      _controller.stopImageStream();
+    }
     _controller.dispose();
     Provider.of<EyeDetectionProvider>(context, listen: false)
         .setDetecting(false);
@@ -95,10 +90,8 @@ class _EyeDetectionCameraState extends State<EyeDetectionCamera> {
             children: [
               CircularProgressIndicator(color: Colors.white),
               SizedBox(height: 16),
-              Text(
-                'Initializing Camera...',
-                style: TextStyle(color: Colors.white),
-              ),
+              Text('Initializing Camera...',
+                  style: TextStyle(color: Colors.white)),
             ],
           ),
         ),
@@ -112,16 +105,9 @@ class _EyeDetectionCameraState extends State<EyeDetectionCamera> {
           return Stack(
             fit: StackFit.expand,
             children: [
-              // Camera Preview
               CameraPreview(_controller),
-
-              // Detection Overlay
               _buildDetectionOverlay(provider),
-
-              // Top Status Bar
               _buildTopStatusBar(provider),
-
-              // Bottom Controls
               _buildBottomControls(),
             ],
           );
@@ -136,7 +122,7 @@ class _EyeDetectionCameraState extends State<EyeDetectionCamera> {
       painter: EyeDetectionOverlayPainter(
         eyeStatus: provider.eyeStatus,
         confidence: provider.confidence,
-        isProcessing: _isProcessing,
+        isProcessing: _isDetecting,
       ),
     );
   }

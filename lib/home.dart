@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Consumer<EyeDetectionProvider>(
         builder: (context, provider, child) {
-          return Padding(
+          return SingleChildScrollView(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -185,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                const Spacer(),
+                const SizedBox(height: 24),
 
                 // Action Buttons
                 Column(
