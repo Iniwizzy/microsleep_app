@@ -1,16 +1,7 @@
-# appcamera
+# Microsleep Detector
 
-A new Flutter project.
+Microsleep adalah kondisi di mana seseorang secara tiba-tiba tertidur selama beberapa detik tanpa disadari. Fenomena ini sering terjadi ketika seseorang sedang kelelahan atau mengantuk berat.
+Microsleep sangat berbahaya, terutama ketika seseorang sedang melakukan aktivitas penting seperti menyetir atau mengoperasikan mesin, karena dalam waktu singkat tersebut, respon tubuh bisa hilang total.
 
-## Getting Started
+Untuk membantu mencegah risiko microsleep, kami membuat Eye Detection App, sebuah aplikasi berbasis AI yang dapat mendeteksi kondisi mata terbuka atau tertutup secara real-time menggunakan kamera depan smartphone.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
