@@ -14,7 +14,7 @@ class EyeDetectionService {
 
     try {
       _interpreter = await Interpreter.fromAsset(
-        'assets/models/eye_detection_model.tflite',
+        'assets/models/eye_state_mobilenetv2.tflite',
       );
       _isInitialized = true;
       print('Eye detection model loaded successfully');
@@ -76,11 +76,11 @@ class EyeDetectionService {
       if (_interpreter != null) {
         _interpreter!.run(input, output);
 
-        final closedProb = output[0][0] as double;
-        final openProb = output[0][1] as double;
+        final closedProb =
+            output[0][0] as double; // output index 0 = opened_eyes
+        final openProb = output[0][1] as double; // output index 1 = closed_eyes
         final isOpen = openProb > closedProb;
         final confidence = isOpen ? openProb : closedProb;
-
         return {
           'status': isOpen ? 'Open' : 'Closed',
           'confidence': confidence,
@@ -137,9 +137,9 @@ class EyeDetectionService {
     for (int y = 0; y < 224; y++) {
       for (int x = 0; x < 224; x++) {
         int pixel = image.getPixel(x, y);
-        input[pixelIndex++] = (img.getRed(pixel) - 127.5) / 127.5;
-        input[pixelIndex++] = (img.getGreen(pixel) - 127.5) / 127.5;
-        input[pixelIndex++] = (img.getBlue(pixel) - 127.5) / 127.5;
+        input[pixelIndex++] = (img.getRed(pixel)) / 255.0;
+        input[pixelIndex++] = (img.getGreen(pixel)) / 255.0;
+        input[pixelIndex++] = (img.getBlue(pixel)) / 255.0;
       }
     }
     return input;

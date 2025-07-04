@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
-import 'package:appcamera/providers/eye_detection_provider.dart';
-import 'package:appcamera/services/eye_detection_service.dart';
+import 'package:microsleep/providers/eye_detection_provider.dart';
+import 'package:microsleep/services/eye_detection_service.dart';
 
 class EyeDetectionCamera extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -16,7 +16,7 @@ class _EyeDetectionCameraState extends State<EyeDetectionCamera> {
   late CameraController _controller;
   bool _isDetecting = false;
   DateTime? _lastDetectionTime;
-  final int _minDetectionDelayMs = 500;
+  final int _minDetectionDelayMs = 400;
 
   @override
   void initState() {

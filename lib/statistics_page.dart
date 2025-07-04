@@ -1,7 +1,7 @@
 // lib/statistics_page.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:appcamera/providers/eye_detection_provider.dart';
+import 'package:microsleep/providers/eye_detection_provider.dart';
 
 class StatisticsPage extends StatelessWidget {
   const StatisticsPage({super.key});

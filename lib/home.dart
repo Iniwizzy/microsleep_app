@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
-import 'package:appcamera/eye_detection_camera.dart';
-import 'package:appcamera/providers/eye_detection_provider.dart';
-import 'package:appcamera/statistics_page.dart';
+import 'package:microsleep/eye_detection_camera.dart';
+import 'package:microsleep/providers/eye_detection_provider.dart';
+import 'package:microsleep/statistics_page.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<CameraDescription> cameras;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
-import 'package:appcamera/home.dart';
-import 'package:appcamera/providers/eye_detection_provider.dart';
+import 'package:microsleep/home.dart';
+import 'package:microsleep/providers/eye_detection_provider.dart';
 
 late List<CameraDescription> _cameras;
 
